@@ -2,9 +2,14 @@ package;
 
 import flixel.FlxGame;
 import openfl.display.Sprite;
+import states.PlayState;
 
 class Main extends Sprite
 {
+	#if js
+	public static var html5gamepad = new HTML5Gamepad();
+	#end
+
 	public function new()
 	{
 		super();
