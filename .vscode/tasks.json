@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"command": "lime build html5 -debug",
+			"label": "build_shell",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+		
+	]
+}

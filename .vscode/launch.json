@@ -1,0 +1,57 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Build + Debug",
+			"type": "lime",
+			"request": "launch",
+			"url": "http://localhost:3000",
+			"webRoot": "${workspaceFolder}/export/html5/bin/",
+			"sourceMaps": true,
+			/*"sourceMapPathOverrides": {
+				"webpack:///./*": "${workspaceFolder}/export/html5/bin/*",
+			    "webpack:///file://*": "*"
+			},*/
+			"linux": {
+				"runtimeExecutable": "/usr/bin/chromium-browser",
+				"runtimeArgs": [
+					"--remote-debugging-port=9222",
+					"--user-data-dir=${workspaceFolder}/.vscode/chromium"
+				]
+			}
+		},
+		{
+			"name": "Debug in Chrome",
+			"type": "chrome",
+			"request": "launch",
+			"port": 9222,
+			"url": "http://localhost:3000",
+			"webRoot": "${workspaceFolder}/export/html5/bin/",
+			"sourceMaps": true,
+			"sourceMapPathOverrides": {
+				"webpack:///./*": "${workspaceFolder}/export/html5/bin/*",
+			    "webpack:///file://*": "*"
+			},
+			"linux": {
+				"runtimeExecutable": "/usr/bin/chromium-browser",
+				"runtimeArgs": [
+					"--remote-debugging-port=9992",
+					"--user-data-dir=${workspaceFolder}/.vscode/chromium",
+					"--app=http://localhost:3000/"
+				]
+			},
+			"preLaunchTask": "build_shell"
+		},
+		{
+			"name": "Debug",
+			"type": "lime",
+			"request": "launch",
+			"preLaunchTask": null
+		},
+		{
+			"name": "Macro",
+			"type": "haxe-eval",
+			"request": "launch"
+		}
+	]
+}
