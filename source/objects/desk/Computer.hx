@@ -2,6 +2,7 @@ package objects.desk;
 
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.FlxState;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.math.FlxPoint;
 
@@ -36,4 +37,6 @@ class Computer extends FlxTypedSpriteGroup<FocusableSprite> implements IFocusabl
 	{
 		return focusPoint;
 	}
+
+	public function doAction(parentState:FlxState):Void {}
 }

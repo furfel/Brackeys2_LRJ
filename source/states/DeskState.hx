@@ -11,7 +11,8 @@ import objects.desk.Tape;
 
 class DeskState extends FlxState
 {
-	private var cassette:Cassette;
+	public var cassette:Cassette;
+
 	private var tape:Tape;
 	private var computer:Computer;
 
@@ -51,8 +52,16 @@ class DeskState extends FlxState
 		pointer.setPosition(focusables[current].getPoint().x, focusables[current].getPoint().y);
 	}
 
+	public var cassetteDone = false;
+
+	private function doAction()
+	{
+		focusables[current].doAction(this);
+	}
+
 	private var left = false;
 	private var right = false;
+	private var action = false;
 
 	override function update(elapsed:Float)
 	{
@@ -60,10 +69,12 @@ class DeskState extends FlxState
 
 		var anyL = FlxG.keys.justPressed.A;
 		var anyR = FlxG.keys.justPressed.D;
+		var anyAction = FlxG.keys.justPressed.ENTER;
 
 		#if js
 		anyL = anyL || Main.html5gamepad.getAxis(0) < -0.5;
 		anyR = anyR || Main.html5gamepad.getAxis(0) > 0.5;
+		anyAction = anyAction || Main.html5gamepad.getButton(1);
 		#end
 
 		if (!left && anyL)
@@ -76,10 +87,17 @@ class DeskState extends FlxState
 			right = true;
 			move();
 		}
+		else if (!action && anyAction)
+		{
+			action = true;
+			doAction();
+		}
 
 		if (!anyL)
 			left = false;
 		if (!anyR)
 			right = false;
+		if (!anyAction)
+			action = false;
 	}
 }

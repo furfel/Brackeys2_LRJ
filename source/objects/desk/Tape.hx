@@ -2,7 +2,9 @@ package objects.desk;
 
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.FlxState;
 import flixel.math.FlxPoint;
+import states.DeskState;
 
 class Tape extends FocusableSprite
 {
@@ -18,5 +20,14 @@ class Tape extends FocusableSprite
 	override function getPoint():FlxPoint
 	{
 		return point;
+	}
+
+	override function doAction(parentState:FlxState)
+	{
+		if ((parentState is DeskState))
+		{
+			var state = cast(parentState, DeskState);
+			if (state.cassetteDone) {}
+		}
 	}
 }

@@ -1,6 +1,7 @@
 package objects.desk;
 
 import flixel.FlxSprite;
+import flixel.FlxState;
 import flixel.math.FlxPoint;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -35,4 +36,6 @@ class FocusableSprite extends FlxSprite implements IFocusable
 	{
 		return FlxPoint.weak(0, 0);
 	}
+
+	public function doAction(parentState:FlxState):Void {}
 }

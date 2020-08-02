@@ -2,7 +2,10 @@ package objects.desk;
 
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.FlxState;
 import flixel.math.FlxPoint;
+import states.CasetteState;
+import states.DeskState;
 
 class Cassette extends FocusableSprite
 {
@@ -18,5 +21,15 @@ class Cassette extends FocusableSprite
 	override function getPoint():FlxPoint
 	{
 		return point;
+	}
+
+	override function doAction(parentState:FlxState)
+	{
+		if ((parentState is DeskState))
+		{
+			var state = cast(parentState, DeskState);
+			if (!state.cassetteDone)
+				state.openSubState(new CasetteState());
+		}
 	}
 }

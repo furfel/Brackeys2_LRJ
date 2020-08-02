@@ -3,19 +3,20 @@ package states;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.FlxSubState;
 import flixel.system.FlxSound;
 import objects.cassette.Cassette;
 
-class CasetteState extends FlxState
+class CasetteState extends FlxSubState
 {
-	public static final MAX_CLICKS = 500;
+	public static final MAX_CLICKS = 15;
 
 	private var cassette:Cassette;
 	private var arrow:FlxSprite;
 
 	private var swipe = new Array<FlxSound>();
 
-	override function create()
+	override public function create()
 	{
 		super.create();
 		add(cassette = new Cassette(0, 0));
@@ -109,6 +110,16 @@ class CasetteState extends FlxState
 		clicks++;
 		cassette.move(clicks, MAX_CLICKS);
 		updateArrow();
+
+		if (clicks >= MAX_CLICKS)
+		{
+			if ((_parentState != null) && (_parentState is DeskState))
+			{
+				cast(_parentState, DeskState).cassetteDone = true;
+				cast(_parentState, DeskState).cassette.angle = 30;
+				close();
+			}
+		}
 	}
 
 	private function updateArrow()
