@@ -2,6 +2,7 @@ package objects.cassette;
 
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
+import flixel.system.FlxSound;
 
 class Cassette extends FlxTypedSpriteGroup<FlxSprite>
 {

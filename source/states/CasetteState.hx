@@ -3,6 +3,7 @@ package states;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.system.FlxSound;
 import objects.cassette.Cassette;
 
 class CasetteState extends FlxState
@@ -12,12 +13,17 @@ class CasetteState extends FlxState
 	private var cassette:Cassette;
 	private var arrow:FlxSprite;
 
+	private var swipe = new Array<FlxSound>();
+
 	override function create()
 	{
 		super.create();
 		add(cassette = new Cassette(0, 0));
 		add(arrow = new FlxSprite(10, 20).loadGraphic("assets/images/cassette/arrow.png"));
 		arrow.alpha = 0.85;
+
+		swipe.push(new FlxSound().loadEmbedded("assets/sounds/swipe1.ogg", false, false));
+		swipe.push(new FlxSound().loadEmbedded("assets/sounds/swipe2.ogg", false, false));
 	}
 
 	private var next:Int = 0;
@@ -98,6 +104,7 @@ class CasetteState extends FlxState
 	{
 		if (cassette == null)
 			return;
+		swipe[next % 2].play(true);
 		next = (next + 1) % 4;
 		clicks++;
 		cassette.move(clicks, MAX_CLICKS);
