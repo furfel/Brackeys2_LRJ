@@ -12,7 +12,19 @@ class Player extends FlxSprite
 	public function new(X:Float, Y:Float)
 	{
 		super(X, Y);
-		makeGraphic(8, 8, FlxColor.CYAN);
+		loadGraphic("assets/images/room/player.png", true, 12, 18);
+		animation.add("standdown", [0], 3);
+		animation.add("walkdown", [1, 2], 5);
+		animation.add("standup", [3], 3);
+		animation.add("walkup", [4, 5], 5);
+		animation.add("standright", [6], 3);
+		animation.add("walkright", [7, 8], 5);
+		animation.add("standleft", [9], 3);
+		animation.add("walkleft", [10, 11], 5);
+		animation.play("standleft");
+
+		setSize(8, 12);
+		offset.set(2, 6);
 	}
 
 	private var left = false;
@@ -57,6 +69,41 @@ class Player extends FlxSprite
 		#end
 	}
 
+	private var currentAnim = "standleft";
+
+	private function updateAnim()
+	{
+		var direction = "down";
+		if (velocity.x > 0.01)
+		{
+			direction = "right";
+		}
+		else if (velocity.x < -0.01)
+		{
+			direction = "left";
+		}
+
+		if (velocity.y > 0.01)
+		{
+			direction = "down";
+		}
+		else if (velocity.y < -0.01)
+		{
+			direction = "up";
+		}
+
+		if (velocity.x > 0.01 || velocity.x < -0.01 || velocity.y > 0.01 || velocity.y < -0.01)
+			direction = "walk" + direction;
+		else
+			direction = "stand" + direction;
+
+		if (currentAnim != direction)
+		{
+			currentAnim = direction;
+			animation.play(direction);
+		}
+	}
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
@@ -99,5 +146,7 @@ class Player extends FlxSprite
 		}
 		else
 			velocity.set(0, 0);
+
+		updateAnim();
 	}
 }

@@ -74,8 +74,9 @@ class DeskState extends FlxState
 			ease: FlxEase.backIn,
 			onComplete: (tw) ->
 			{
-				FlxG.camera.fade(FlxColor.fromRGB(25, 25, 25), 0.3, () -> {
-					// Switch state here
+				FlxG.camera.fade(ComputerState.FadeColor, 0.3, () ->
+				{
+					FlxG.switchState(new ComputerState());
 				});
 			}
 		});
