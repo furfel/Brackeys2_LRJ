@@ -19,6 +19,8 @@ class CasetteState extends FlxSubState
 	override public function create()
 	{
 		super.create();
+		add(new FlxSprite(0, 0).loadGraphic("assets/images/background1.png"));
+
 		add(cassette = new Cassette(0, 0));
 		add(arrow = new FlxSprite(10, 20).loadGraphic("assets/images/cassette/arrow.png"));
 		arrow.alpha = 0.85;

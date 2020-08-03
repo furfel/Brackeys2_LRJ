@@ -1,8 +1,8 @@
 package states;
 
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.FlxState;
-import haxe.iterators.ArrayIterator;
 import objects.desk.Cassette;
 import objects.desk.Computer;
 import objects.desk.IFocusable;
@@ -25,6 +25,7 @@ class DeskState extends FlxState
 	{
 		super.create();
 
+		add(new FlxSprite(0, 0).loadGraphic("assets/images/backgrounddesk.png"));
 		add(cassette = new Cassette(43, 45));
 		add(computer = new Computer(0, 0));
 		add(tape = new Tape(12, 35));
