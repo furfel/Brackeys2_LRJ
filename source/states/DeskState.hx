@@ -1,5 +1,6 @@
 package states;
 
+import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -14,6 +15,8 @@ import objects.desk.Tape;
 
 class DeskState extends FlxState
 {
+	public static final FadeColor = FlxColor.fromString("#67CFA7");
+
 	public var cassette:Cassette;
 	public var tape:Tape;
 
@@ -39,6 +42,8 @@ class DeskState extends FlxState
 
 		add(pointer = new Pointer(0, 0));
 		move();
+
+		FlxG.camera.fade(FadeColor, 0.3, true);
 	}
 
 	private function move(back:Bool = false)
@@ -57,7 +62,7 @@ class DeskState extends FlxState
 	}
 
 	public var cassetteDone = false;
-	public var tapeDone = true;
+	public var tapeDone = false;
 
 	private function doAction()
 	{

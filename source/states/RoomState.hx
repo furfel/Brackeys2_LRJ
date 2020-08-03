@@ -6,6 +6,8 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.system.FlxSound;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import objects.Player;
 
 class RoomState extends FlxState
@@ -14,6 +16,8 @@ class RoomState extends FlxState
 	private var phone:FlxSprite;
 	private var blocks = new FlxTypedGroup<FlxObject>();
 	private var player:Player;
+
+	private var desk:FlxObject;
 
 	private var ringtone:FlxSound;
 	private var phoneButton:FlxSound;
@@ -54,6 +58,7 @@ class RoomState extends FlxState
 			phone.kill();
 			phoneButton.play();
 			player.unfreeze();
+			add(desk = new FlxObject(8, 10, 24, 13));
 		};
 		phoneButton.onComplete = () ->
 		{
@@ -78,6 +83,24 @@ class RoomState extends FlxState
 		add(blocks);
 	}
 
+	public function zoomToDesk()
+	{
+		FlxTween.tween(FlxG.camera, {
+			"scroll.x": -8,
+			"scroll.y": -18,
+			zoom: 2.0
+		}, 0.6, {
+			ease: FlxEase.cubeInOut,
+			onComplete: (tw) ->
+			{
+				FlxG.camera.fade(DeskState.FadeColor, 0.3, () ->
+				{
+					FlxG.switchState(new DeskState());
+				});
+			}
+		});
+	}
+
 	var action = false;
 
 	override function update(elapsed:Float)
@@ -93,9 +116,15 @@ class RoomState extends FlxState
 
 		if (!action && anyAction)
 		{
-			if (player.overlaps(phone) && phone.alive)
+			if (phone.alive && player.overlaps(phone))
 			{
 				answerCall();
+			}
+			else if (desk != null && desk.alive && player.overlaps(desk))
+			{
+				player.freeze();
+				desk.kill();
+				zoomToDesk();
 			}
 			action = true;
 		}
