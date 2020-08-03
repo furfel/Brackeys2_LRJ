@@ -104,10 +104,27 @@ class Player extends FlxSprite
 		}
 	}
 
+	public function freeze()
+	{
+		frozen = true;
+	}
+
+	public function unfreeze()
+	{
+		frozen = false;
+	}
+
+	private var frozen = false;
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
+		if (frozen)
+		{
+			velocity.set(0, 0);
+			return;
+		}
 		updateMovement();
 		var angle = 0;
 		if (up || down || left || right)
