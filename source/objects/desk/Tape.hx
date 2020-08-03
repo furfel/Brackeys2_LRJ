@@ -13,7 +13,10 @@ class Tape extends FocusableSprite
 	public function new(X:Float, Y:Float)
 	{
 		super(X, Y);
-		loadGraphic("assets/images/desk/tape.png");
+		loadGraphic("assets/images/desk/tape.png", true, 27, 27);
+		animation.add("notape", [0], 5);
+		animation.add("tape", [1], 5);
+		animation.play("notape");
 		point.set(this.x + this.width / 2, this.y + this.height / 2);
 	}
 
@@ -27,7 +30,11 @@ class Tape extends FocusableSprite
 		if ((parentState is DeskState))
 		{
 			var state = cast(parentState, DeskState);
-			if (state.cassetteDone) {}
+			if (state.cassetteDone)
+			{
+				state.tapeDone = true;
+				animation.play("tape");
+			}
 		}
 	}
 }

@@ -3,6 +3,9 @@ package states;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxColor;
 import objects.desk.Cassette;
 import objects.desk.Computer;
 import objects.desk.IFocusable;
@@ -12,8 +15,8 @@ import objects.desk.Tape;
 class DeskState extends FlxState
 {
 	public var cassette:Cassette;
+	public var tape:Tape;
 
-	private var tape:Tape;
 	private var computer:Computer;
 
 	private var pointer:Pointer;
@@ -54,10 +57,28 @@ class DeskState extends FlxState
 	}
 
 	public var cassetteDone = false;
+	public var tapeDone = true;
 
 	private function doAction()
 	{
 		focusables[current].doAction(this);
+	}
+
+	public function zoomToComputer()
+	{
+		FlxTween.tween(FlxG.camera, {
+			"scroll.x": 14,
+			"scroll.y": -8,
+			zoom: 2.3
+		}, 0.6, {
+			ease: FlxEase.backIn,
+			onComplete: (tw) ->
+			{
+				FlxG.camera.fade(FlxColor.fromRGB(25, 25, 25), 0.3, () -> {
+					// Switch state here
+				});
+			}
+		});
 	}
 
 	private var left = false;
