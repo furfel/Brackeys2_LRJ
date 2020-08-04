@@ -8,6 +8,8 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.system.FlxSound;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 import objects.Player;
 
 class RoomState extends FlxState
@@ -34,10 +36,23 @@ class RoomState extends FlxState
 		add(room = new FlxSprite(0, 0).loadGraphic("assets/images/room/room.png"));
 		createPhone();
 		createBlocks();
-		add(player = new Player(28, 26));
+		add(player = new Player(36, 30));
 		FlxG.worldBounds.set(0, 0, 64, 64);
 
-		ringtone.play();
+		player.freeze();
+
+		ringtone.volume = 0;
+		ringtone.fadeIn(1.0, 0, 1).play();
+
+		FlxG.camera.alpha = 0;
+		new FlxTimer().start(1.5, (t) ->
+		{
+			FlxG.camera.fade(FlxColor.BLACK, 1, true, () ->
+			{
+				player.unfreeze();
+			});
+			FlxG.camera.alpha = 1;
+		});
 	}
 
 	private function createPhone()
