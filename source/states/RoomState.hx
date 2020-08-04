@@ -25,6 +25,8 @@ class RoomState extends FlxState
 	private var phoneButton:FlxSound;
 	private var dialogue:FlxSound;
 
+	private var indicator:Indicator;
+
 	override function create()
 	{
 		super.create();
@@ -53,6 +55,8 @@ class RoomState extends FlxState
 			});
 			FlxG.camera.alpha = 1;
 		});
+
+		add(indicator = new Indicator());
 	}
 
 	private function createPhone()
@@ -68,12 +72,13 @@ class RoomState extends FlxState
 		phone.kill();
 		ringtone.stop();
 		player.freeze();
+		indicator.showListen();
 		dialogue.onComplete = () ->
 		{
-			phone.kill();
 			phoneButton.play();
 			player.unfreeze();
 			add(desk = new FlxObject(8, 10, 24, 13));
+			indicator.hide();
 		};
 		phoneButton.onComplete = () ->
 		{
@@ -129,19 +134,28 @@ class RoomState extends FlxState
 		anyAction = anyAction || Main.html5gamepad.getButton(1);
 		#end
 
-		if (!action && anyAction)
+		if (phone != null && phone.alive)
 		{
-			if (phone.alive && player.overlaps(phone))
+			if (player.overlaps(phone))
+				if (!action && anyAction)
+				{
+					answerCall();
+					action = true;
+				}
+		}
+
+		if (desk != null && desk.alive)
+		{
+			if (player.overlaps(desk))
 			{
-				answerCall();
+				if (!action && anyAction)
+				{
+					player.freeze();
+					desk.kill();
+					zoomToDesk();
+					action = true;
+				}
 			}
-			else if (desk != null && desk.alive && player.overlaps(desk))
-			{
-				player.freeze();
-				desk.kill();
-				zoomToDesk();
-			}
-			action = true;
 		}
 
 		if (!anyAction)

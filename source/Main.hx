@@ -19,6 +19,6 @@ class Main extends Sprite
 		super();
 		// For LOWREZJAM 64x64 scaled to 320x320 in browser
 		// for visibility
-		addChild(new FlxGame(64, 64, RoomState));
+		addChild(new FlxGame(64, 64, ComputerState));
 	}
 }

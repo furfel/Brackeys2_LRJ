@@ -18,6 +18,8 @@ class ComputerState extends FlxState
 	private var casseteLoadingSound:FlxSound;
 	private var stopTape:FlxSound;
 
+	private var indicator:Indicator;
+
 	override function create()
 	{
 		super.create();
@@ -33,6 +35,8 @@ class ComputerState extends FlxState
 		{
 			startBootAnimation();
 		});
+
+		add(indicator = new Indicator());
 	}
 
 	private function startBootAnimation()
@@ -44,6 +48,7 @@ class ComputerState extends FlxState
 			{
 				screen.animation.play("memory");
 				startupSound.play();
+				indicator.showAction();
 				waitingForPress = true;
 			});
 		});
@@ -51,6 +56,7 @@ class ComputerState extends FlxState
 
 	private function continueBootAnimation()
 	{
+		indicator.hide();
 		clickSound.play();
 		casseteLoadingSound.play();
 		screen.animation.play("tape");
