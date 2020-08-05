@@ -1,38 +1,39 @@
-package objects;
+package theactualgame;
 
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
-import flixel.util.FlxColor;
 
 class Player extends FlxSprite
 {
-	public static final speed = 50;
+	private static final speed = 40;
 
 	public function new(X:Float, Y:Float)
 	{
 		super(X, Y);
-		loadGraphic("assets/images/room/player.png", true, 12, 18);
-		animation.add("stand" + Std.string(FlxObject.DOWN), [0], 3);
-		animation.add("walk" + Std.string(FlxObject.DOWN), [1, 2], 5);
-		animation.add("stand" + Std.string(FlxObject.UP), [3], 3);
-		animation.add("walk" + Std.string(FlxObject.UP), [4, 5], 5);
-		animation.add("stand" + Std.string(FlxObject.RIGHT), [6], 3);
-		animation.add("walk" + Std.string(FlxObject.RIGHT), [7, 8], 5);
-		animation.add("stand" + Std.string(FlxObject.LEFT), [9], 3);
-		animation.add("walk" + Std.string(FlxObject.LEFT), [10, 11], 5);
-		facing = FlxObject.LEFT;
-		updateAnim();
+		loadGraphic("assets/images/mmo/sprites.png", true, 8, 8);
 
-		setSize(8, 12);
-		offset.set(2, 6);
+		animation.add(Std.string(FlxObject.RIGHT), [2], 3);
+		animation.add(Std.string(FlxObject.LEFT), [2], 3, true, true);
+		animation.add(Std.string(FlxObject.DOWN), [5], 3);
+		animation.add(Std.string(FlxObject.UP), [8], 3);
+
+		animation.add("walk" + Std.string(FlxObject.RIGHT), [1, 2], 5);
+		animation.add("walk" + Std.string(FlxObject.LEFT), [1, 2], 5, true, true);
+		animation.add("walk" + Std.string(FlxObject.DOWN), [3, 4], 5);
+		animation.add("walk" + Std.string(FlxObject.UP), [6, 7], 5);
+
+		animation.play(Std.string(FlxObject.DOWN));
+
+		setSize(6, 7);
+		offset.set(1, 1);
 	}
 
-	private var left = false;
-	private var right = false;
 	private var up = false;
 	private var down = false;
+	private var left = false;
+	private var right = false;
 
 	private function updateMovement()
 	{
@@ -79,8 +80,6 @@ class Player extends FlxSprite
 
 		if (velocity.x > 0.01 || velocity.x < -0.01 || velocity.y > 0.01 || velocity.y < -0.01)
 			direction = "walk" + direction;
-		else
-			direction = "stand" + direction;
 
 		if (currentAnim != direction)
 		{
@@ -89,27 +88,10 @@ class Player extends FlxSprite
 		}
 	}
 
-	public function freeze()
-	{
-		frozen = true;
-	}
-
-	public function unfreeze()
-	{
-		frozen = false;
-	}
-
-	private var frozen = false;
-
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
-		if (frozen)
-		{
-			velocity.set(0, 0);
-			return;
-		}
 		updateMovement();
 		var angle = 0;
 		if (up || down || left || right)

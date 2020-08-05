@@ -56,6 +56,7 @@ class ComputerState extends FlxState
 
 	private function continueBootAnimation()
 	{
+		waitingForPress = false;
 		indicator.hide();
 		clickSound.play();
 		casseteLoadingSound.play();
@@ -103,7 +104,7 @@ class ComputerState extends FlxState
 
 		if (!pressed)
 		{
-			if (anyAction)
+			if (anyAction && waitingForPress)
 			{
 				pressed = true;
 				continueBootAnimation();
