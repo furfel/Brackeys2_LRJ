@@ -3,7 +3,9 @@ package theactualgame;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxAngle;
+import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import flixel.util.FlxColor;
 
 class Slime extends FlxSprite
 {
@@ -23,6 +25,8 @@ class Slime extends FlxSprite
 		offset.set(1, 3);
 
 		parent = state;
+
+		health = 10.0;
 	}
 
 	private var rollTimeout = 0.8;
@@ -51,9 +55,38 @@ class Slime extends FlxSprite
 			}
 	}
 
+	private var paralyzed = 0.0;
+	private var paralyzedVelocity:FlxPoint;
+
+	public function hitBy(attack:Float)
+	{
+		if (paralyzed > 0)
+			return;
+		health -= attack;
+		if (health < 0)
+		{
+			kill();
+			return;
+		}
+		paralyzedVelocity = new FlxPoint(velocity.x, velocity.y);
+		paralyzed = 0.8;
+	}
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		if (paralyzed > 0)
+		{
+			paralyzed -= elapsed;
+			alpha = 0.7 + 0.1 * FlxMath.fastCos(paralyzed * 8.0);
+			if (paralyzed <= 0)
+			{
+				alpha = 1;
+				velocity.set(paralyzedVelocity.x, paralyzedVelocity.y);
+			}
+			return;
+		}
 
 		if (rollTimeout > 0)
 		{

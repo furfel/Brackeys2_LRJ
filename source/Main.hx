@@ -1,6 +1,7 @@
 package;
 
 import flixel.FlxGame;
+import openfl.Lib;
 import openfl.display.Sprite;
 import states.CasetteState;
 import states.ComputerState;

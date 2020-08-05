@@ -87,6 +87,38 @@ class Player extends FlxSprite
 			down = false;
 			up = false;
 		}
+		#else
+		if ((FlxG.gamepads.lastActive != null && FlxG.gamepads.lastActive.getAxis(0) > 0.5) || FlxG.keys.pressed.D)
+		{
+			right = true;
+			left = false;
+		}
+		else if ((FlxG.gamepads.lastActive != null && FlxG.gamepads.lastActive.getAxis(0) < -0.5) || FlxG.keys.pressed.A)
+		{
+			left = true;
+			right = false;
+		}
+		else
+		{
+			left = false;
+			right = false;
+		}
+
+		if ((FlxG.gamepads.lastActive != null && FlxG.gamepads.lastActive.getAxis(1) > 0.5) || FlxG.keys.pressed.S)
+		{
+			down = true;
+			up = false;
+		}
+		else if ((FlxG.gamepads.lastActive != null && FlxG.gamepads.lastActive.getAxis(1) < -0.5) || FlxG.keys.pressed.W)
+		{
+			down = false;
+			up = true;
+		}
+		else
+		{
+			down = false;
+			up = false;
+		}
 		#end
 	}
 
@@ -118,6 +150,8 @@ class Player extends FlxSprite
 		velocity.rotate(FlxPoint.weak(0, 0), _angle);
 	}
 
+	private var action = false;
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
@@ -137,7 +171,7 @@ class Player extends FlxSprite
 		}
 
 		updateMovement();
-		var angle = 0;
+		var angle = 0.0;
 		if (up || down || left || right)
 		{
 			velocity.set(getFloorSpeed(), 0);
@@ -182,6 +216,25 @@ class Player extends FlxSprite
 		}
 		else
 			velocity.set(0, 0);
+
+		var anyAction = FlxG.keys.justPressed.SPACE;
+		#if js
+		anyAction = anyAction || Main.html5gamepad.getButton(0);
+		#end
+		if (!action && anyAction)
+		{
+			action = true;
+			if (angle == 0)
+				angle = FlxAngle.angleFromFacing(facing, true);
+			var stone = parent.stones.getFirstAvailable();
+			if (stone == null && parent.stones.countLiving() < parent.stones.maxSize)
+				parent.stones.add(new Stone(getMidpoint().x - 2, getMidpoint().y - 2, angle));
+			else if (stone != null)
+				stone.throwStone(getMidpoint().x - 2, getMidpoint().y - 2, angle);
+		}
+
+		if (!anyAction)
+			action = false;
 
 		updateAnim();
 	}
