@@ -1,5 +1,6 @@
 package theactualgame;
 
+import flixel.FlxG;
 import flixel.tile.FlxBaseTilemap;
 import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
@@ -101,5 +102,10 @@ class DungeonMap
 	public function getWallsMap():FlxTilemap
 	{
 		return walls;
+	}
+
+	public function updateWorldBounds()
+	{
+		FlxG.worldBounds.set(0, 0, walls.width, walls.height);
 	}
 }

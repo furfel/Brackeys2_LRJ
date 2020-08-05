@@ -3,16 +3,21 @@ package theactualgame;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.math.FlxAngle;
+import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import flixel.util.FlxColor;
 
 class Player extends FlxSprite
 {
 	private static final speed = 40;
 
-	public function new(X:Float, Y:Float)
+	private var parent:TheActualGameSubstate;
+
+	public function new(X:Float, Y:Float, state:TheActualGameSubstate)
 	{
 		super(X, Y);
-		loadGraphic("assets/images/mmo/sprites.png", true, 8, 8);
+		loadGraphic("assets/images/mmo/sprites.png", true, 8, 8, true);
 
 		animation.add(Std.string(FlxObject.RIGHT), [2], 3);
 		animation.add(Std.string(FlxObject.LEFT), [2], 3, true, true);
@@ -26,6 +31,8 @@ class Player extends FlxSprite
 
 		animation.play(Std.string(FlxObject.DOWN));
 
+		parent = state;
+
 		setSize(6, 7);
 		offset.set(1, 1);
 	}
@@ -34,6 +41,17 @@ class Player extends FlxSprite
 	private var down = false;
 	private var left = false;
 	private var right = false;
+
+	private function getFloorSpeed():Float
+	{
+		if (parent != null)
+		{
+			var tile = parent.floors.getTile(Math.round(x / 8), Math.round(y / 8));
+			if (tile == 24)
+				return speed / 1.25;
+		}
+		return speed;
+	}
 
 	private function updateMovement()
 	{
@@ -88,15 +106,41 @@ class Player extends FlxSprite
 		}
 	}
 
+	private var paralyzed = 0.0;
+
+	public function hitAndParalyze(slime:FlxSprite)
+	{
+		if (paralyzed > 0)
+			return;
+		paralyzed = 0.4;
+		var _angle = FlxAngle.angleBetween(this, slime, true);
+		velocity.set(-speed, 0);
+		velocity.rotate(FlxPoint.weak(0, 0), _angle);
+	}
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		if (paralyzed > 0)
+		{
+			paralyzed -= elapsed;
+			alpha = 0.7 + 0.1 * FlxMath.fastCos(paralyzed * 8.0);
+			color = FlxColor.fromRGBFloat(0.8 + 0.2 * FlxMath.fastSin(paralyzed * 12.0), 0.25, 0.25);
+			if (paralyzed <= 0)
+			{
+				alpha = 1;
+				velocity.set(0, 0);
+				color = FlxColor.WHITE;
+			}
+			return;
+		}
 
 		updateMovement();
 		var angle = 0;
 		if (up || down || left || right)
 		{
-			velocity.set(speed, 0);
+			velocity.set(getFloorSpeed(), 0);
 
 			if ((up && down) || (!up && !down))
 			{
