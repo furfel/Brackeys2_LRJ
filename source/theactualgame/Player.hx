@@ -6,11 +6,15 @@ import flixel.FlxSprite;
 import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import flixel.system.FlxSound;
 import flixel.util.FlxColor;
 
 class Player extends FlxSprite
 {
 	private static final speed = 40;
+
+	private var walkSoundGround:FlxSound;
+	private var walkSoundStone:FlxSound;
 
 	private var parent:TheActualGameSubstate;
 
@@ -31,10 +35,39 @@ class Player extends FlxSprite
 
 		animation.play(Std.string(FlxObject.DOWN));
 
+		walkSoundGround = new FlxSound();
+		walkSoundStone = new FlxSound();
+
 		parent = state;
 
 		setSize(6, 7);
 		offset.set(1, 1);
+	}
+
+	private function stopSounds()
+	{
+		walkSoundGround.stop();
+		walkSoundStone.stop();
+	}
+
+	private function updateSoundFromSpeed(speed:Float)
+	{
+		if (speed >= 39.0)
+		{
+			if (!walkSoundStone.playing)
+			{
+				stopSounds();
+				walkSoundStone.play();
+			}
+		}
+		else if (speed < 39.0)
+		{
+			if (!walkSoundGround.playing)
+			{
+				stopSounds();
+				walkSoundGround.play();
+			}
+		}
 	}
 
 	private var up = false;
@@ -174,7 +207,9 @@ class Player extends FlxSprite
 		var angle = 0.0;
 		if (up || down || left || right)
 		{
-			velocity.set(getFloorSpeed(), 0);
+			var speed = getFloorSpeed();
+			velocity.set(speed, 0);
+			updateSoundFromSpeed(speed);
 
 			if ((up && down) || (!up && !down))
 			{
@@ -215,7 +250,10 @@ class Player extends FlxSprite
 			velocity.rotate(FlxPoint.weak(0, 0), angle);
 		}
 		else
+		{
 			velocity.set(0, 0);
+			stopSounds();
+		}
 
 		var anyAction = FlxG.keys.justPressed.SPACE;
 		#if js
