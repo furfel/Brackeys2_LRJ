@@ -22,12 +22,15 @@ class TheActualGameSubstate extends FlxSubState
 	public var slime = new FlxTypedGroup<Slime>();
 	public var stones = new FlxTypedGroup<Stone>(10);
 
+	public var uiGroup = new FlxTypedGroup<FlxSprite>();
+	public var follower:Follower;
+
 	override function create()
 	{
 		super.create();
 
-		slime.add(new Slime(8 * 8, 9 * 8, this));
-		slime.add(new Slime(18 * 8, 7 * 8, this));
+		slime.add(new Slime(8 * 8, 9 * 8, this).setHealthbar(new Healthbar().addTo(uiGroup)));
+		slime.add(new Slime(18 * 8, 7 * 8, this).setHealthbar(new Healthbar().addTo(uiGroup)));
 
 		dungeonMap = new DungeonMap();
 		add(floors = dungeonMap.getFloorsMap());
@@ -35,7 +38,10 @@ class TheActualGameSubstate extends FlxSubState
 		add(stones);
 		add(player = new Player(6 * 8, 15 * 8, this));
 		add(walls = dungeonMap.getWallsMap());
+		add(follower = new Follower(player.x - 16, player.y + 8, player, walls));
 		dungeonMap.updateWorldBounds();
+
+		add(uiGroup);
 
 		FlxG.camera.follow(player);
 		FlxG.camera.fade(ComputerState.FadeColor, 0.2, true);
@@ -43,6 +49,7 @@ class TheActualGameSubstate extends FlxSubState
 
 	override function update(elapsed:Float)
 	{
+		FlxG.collide(follower, walls);
 		super.update(elapsed);
 		FlxG.collide(player, walls);
 

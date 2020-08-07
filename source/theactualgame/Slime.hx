@@ -15,6 +15,7 @@ class Slime extends FlxSprite
 
 	private var parent:TheActualGameSubstate;
 	private var slimeSound:FlxSound;
+	private var healthbar:Healthbar;
 
 	public function new(X:Float, Y:Float, state:TheActualGameSubstate)
 	{
@@ -72,14 +73,27 @@ class Slime extends FlxSprite
 	private var paralyzed = 0.0;
 	private var paralyzedVelocity:FlxPoint;
 
+	public function setHealthbar(_healthbar:Healthbar):Slime
+	{
+		healthbar = _healthbar;
+		healthbar.x = this.x;
+		healthbar.y = this.y;
+		healthbar.followObject(this);
+		healthbar.updateHealth(health, 10.0);
+		return this;
+	}
+
 	public function hitBy(attack:Float)
 	{
 		if (paralyzed > 0)
 			return;
 		health -= attack;
+		healthbar.updateHealth(health, 10.0);
 		if (health < 0)
 		{
 			kill();
+			if (healthbar != null)
+				healthbar.kill();
 			return;
 		}
 		paralyzedVelocity = new FlxPoint(velocity.x, velocity.y);
