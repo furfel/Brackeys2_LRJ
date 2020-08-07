@@ -9,7 +9,7 @@ import objects.cassette.Cassette;
 
 class CasetteState extends FlxSubState
 {
-	public static final MAX_CLICKS = 15;
+	public static final MAX_CLICKS = 30;
 
 	private var cassette:Cassette;
 	private var arrow:FlxSprite;

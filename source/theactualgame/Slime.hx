@@ -40,6 +40,7 @@ class Slime extends FlxSprite
 	private function move()
 	{
 		var distRatio = parent.player.getMidpoint().distanceTo(this.getMidpoint()) / MAX_DIST;
+		var distFollowerRatio = parent.follower.getMidpoint().distanceTo(this.getMidpoint()) / MAX_DIST;
 		if (distRatio <= 1.0)
 		{
 			var _angle = FlxAngle.angleBetween(parent.player, this, true);
@@ -49,6 +50,12 @@ class Slime extends FlxSprite
 			if (!slimeSound.playing)
 				slimeSound.play();
 			slimeSound.volume = 1.0 - distRatio;
+		}
+		else if (distFollowerRatio <= 1.0)
+		{
+			var _angle = FlxAngle.angleBetween(parent.follower, this, true);
+			velocity.set(-SPEED, 0);
+			velocity.rotate(FlxPoint.weak(0, 0), _angle);
 		}
 		else
 		{

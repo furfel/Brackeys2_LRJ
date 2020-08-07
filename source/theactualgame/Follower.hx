@@ -6,6 +6,7 @@ import flixel.FlxSprite;
 import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import flixel.system.FlxSound;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxColor;
 
@@ -13,11 +14,16 @@ class Follower extends FlxSprite
 {
 	private var player:Player;
 	private var walls:FlxTilemap;
+	private var parent:TheActualGameSubstate;
 
-	public function new(X:Float, Y:Float, player:Player, walls:FlxTilemap)
+	private var wowow:FlxSound;
+
+	public function new(X:Float, Y:Float, player:Player, walls:FlxTilemap, parent:TheActualGameSubstate)
 	{
 		super(X, Y);
-		loadGraphic("assets/images/mmo/sprites.png", true, 8, 8);
+		loadGraphic("assets/images/mmo/sprites.png", true, 8, 8, true);
+
+		wowow = new FlxSound().loadEmbedded("assets/sounds/wowow.ogg");
 
 		animation.add(Std.string(FlxObject.RIGHT), [10], 3);
 		animation.add(Std.string(FlxObject.RIGHT) + "walk", [9, 10], 3);
@@ -33,9 +39,58 @@ class Follower extends FlxSprite
 
 		this.player = player;
 		this.walls = walls;
+		this.parent = parent;
+
+		health = 100.0;
 	}
 
 	var currentPoint:FlxPoint = null;
+
+	private var healthbar:Healthbar;
+
+	public function setHealthbar(_healthbar:Healthbar):Follower
+	{
+		healthbar = _healthbar;
+		healthbar.x = this.x;
+		healthbar.y = this.y;
+		healthbar.followObject(this);
+		healthbar.updateHealth(health, 100.0);
+		return this;
+	}
+
+	private var paralyzed = 0.0;
+
+	private var damnPlayed = false;
+
+	public function hitAndParalyze(slime:FlxSprite)
+	{
+		if (paralyzed > 0)
+			return;
+
+		var hit = FlxG.random.float(1.0, 5.0);
+		health -= hit;
+		if (healthbar != null)
+			healthbar.updateHealth(health, 100.0);
+
+		if (health < 20 && !damnPlayed)
+		{
+			damnPlayed = true;
+			FlxG.sound.play("assets/sounds/damn.ogg");
+		}
+		else if (hit >= 2.5 && !wowow.playing)
+			wowow.play();
+
+		if (health < 0)
+		{
+			if (parent != null)
+				parent.gameOver();
+			return;
+		}
+		paralyzed = 0.4;
+		var _angle = FlxAngle.angleBetween(this, slime, true);
+		velocity.set(-25.0, 0);
+		velocity.rotate(FlxPoint.weak(0, 0), _angle);
+	}
 
 	var currentAnimation = "";
 
@@ -67,15 +122,17 @@ class Follower extends FlxSprite
 				var sum = ydist + xdist;
 				if (sum > 0)
 					velocity.set(FlxMath.signOf(currentPoint.x - mp.x) * xdist / sum * 25.0, FlxMath.signOf(currentPoint.y - mp.y) * ydist / sum * 25.0);
-				if (velocity.y > 0)
-					facing = FlxObject.DOWN;
-				else if (velocity.y < 0)
-					facing = FlxObject.UP;
+				if (ydist > xdist)
+				{
+					if (velocity.y > 0)
+						facing = FlxObject.DOWN;
+					else if (velocity.y < 0)
+						facing = FlxObject.UP;
+				}
 				else if (velocity.x > 0)
 					facing = FlxObject.RIGHT;
 				else if (velocity.x < 0)
 					facing = FlxObject.LEFT;
-				// velocity.rotate(FlxPoint.weak(0, 0), FlxAngle.asDegrees(Math.atan2(currentPoint.y - getMidpoint().y, currentPoint.x - getMidpoint().x)));
 			}
 			else
 			{
@@ -90,6 +147,20 @@ class Follower extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		if (paralyzed > 0)
+		{
+			paralyzed -= elapsed;
+			alpha = 0.7 + 0.1 * FlxMath.fastCos(paralyzed * 8.0);
+			color = FlxColor.fromRGBFloat(0.8 + 0.2 * FlxMath.fastSin(paralyzed * 12.0), 0.25, 0.25);
+			if (paralyzed <= 0)
+			{
+				alpha = 1;
+				velocity.set(0, 0);
+				color = FlxColor.WHITE;
+			}
+			return;
+		}
 
 		if (player != null && player.overlaps(this))
 		{

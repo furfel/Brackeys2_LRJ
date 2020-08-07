@@ -35,13 +35,15 @@ class Player extends FlxSprite
 
 		animation.play(Std.string(FlxObject.DOWN));
 
-		walkSoundGround = new FlxSound();
-		walkSoundStone = new FlxSound();
+		walkSoundGround = new FlxSound().loadEmbedded("assets/sounds/steps1.ogg", true);
+		walkSoundStone = new FlxSound().loadEmbedded("assets/sounds/steps2.ogg", true);
 
 		parent = state;
 
 		setSize(6, 7);
 		offset.set(1, 1);
+
+		health = 100.0;
 	}
 
 	private function stopSounds()
@@ -171,12 +173,35 @@ class Player extends FlxSprite
 		}
 	}
 
+	private var healthbar:Healthbar;
+
+	public function setHealthbar(_healthbar:Healthbar):Player
+	{
+		healthbar = _healthbar;
+		healthbar.x = this.x;
+		healthbar.y = this.y;
+		healthbar.followObject(this);
+		healthbar.updateHealth(health, 100.0);
+		return this;
+	}
+
 	private var paralyzed = 0.0;
 
 	public function hitAndParalyze(slime:FlxSprite)
 	{
 		if (paralyzed > 0)
 			return;
+
+		health -= FlxG.random.float(1.0, 5.0);
+		if (healthbar != null)
+			healthbar.updateHealth(health, 100.0);
+
+		if (health < 0)
+		{
+			if (parent != null)
+				parent.gameOver();
+			return;
+		}
 		paralyzed = 0.4;
 		var _angle = FlxAngle.angleBetween(this, slime, true);
 		velocity.set(-speed, 0);

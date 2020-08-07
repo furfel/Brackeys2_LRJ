@@ -71,7 +71,7 @@ class ComputerState extends FlxState
 				FlxG.camera.fade(FadeColor, 0.15, () ->
 				{
 					remove(screen);
-					openSubState(new TheActualGameSubstate());
+					openSubState(new TheActualGameSubstate(this));
 				});
 			});
 		});
