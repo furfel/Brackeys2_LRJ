@@ -16,8 +16,9 @@ class Slime extends FlxSprite
 	private var parent:TheActualGameSubstate;
 	private var slimeSound:FlxSound;
 	private var healthbar:Healthbar;
+	private var spawner:Spawner;
 
-	public function new(X:Float, Y:Float, state:TheActualGameSubstate)
+	public function new(X:Float, Y:Float, state:TheActualGameSubstate, spawn:Spawner)
 	{
 		super(X, Y);
 
@@ -31,6 +32,7 @@ class Slime extends FlxSprite
 		offset.set(1, 3);
 
 		parent = state;
+		spawner = spawn;
 
 		health = 10.0;
 	}
@@ -101,6 +103,7 @@ class Slime extends FlxSprite
 			kill();
 			if (healthbar != null)
 				healthbar.kill();
+			spawner.killSlime();
 			return;
 		}
 		paralyzedVelocity = new FlxPoint(velocity.x, velocity.y);

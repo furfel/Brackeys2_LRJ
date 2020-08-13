@@ -10,7 +10,7 @@ class Player extends FlxSprite
 {
 	public static final speed = 50;
 
-	public function new(X:Float, Y:Float)
+	public function new(X:Float, Y:Float, direction:Int = FlxObject.LEFT)
 	{
 		super(X, Y);
 		loadGraphic("assets/images/room/player.png", true, 12, 18);
@@ -22,7 +22,7 @@ class Player extends FlxSprite
 		animation.add("walk" + Std.string(FlxObject.RIGHT), [7, 8], 5);
 		animation.add("stand" + Std.string(FlxObject.LEFT), [9], 3);
 		animation.add("walk" + Std.string(FlxObject.LEFT), [10, 11], 5);
-		facing = FlxObject.LEFT;
+		facing = direction;
 		updateAnim();
 
 		setSize(8, 12);

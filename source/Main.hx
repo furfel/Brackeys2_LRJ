@@ -20,6 +20,14 @@ class Main extends Sprite
 		super();
 		// For LOWREZJAM 64x64 scaled to 320x320 in browser
 		// for visibility
-		addChild(new FlxGame(64, 64, RoomState));
+		addChild(new FlxGame(64, 64, ComputerState, true));
+		// addChild(new FlxGame(64, 64, RoomState, true));
+	}
+
+	public static function xcel(column:String):Int
+	{
+		return (column.length > 1) ? (column.toLowerCase()
+			.charCodeAt(0) - 'a'.code) * ('z'.code - 'a'.code) + column.toLowerCase().charCodeAt(1) - 'a'.code : column.toLowerCase().charCodeAt(0)
+			- 'a'.code;
 	}
 }

@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="FlxProject" file="FlxProject" main="Main" version="0.0.1" company="HaxeFlixel" />
+	<app title="Eddie calls Johny to play their favorite MMO" file="FlxProject" main="Main" version="1.0.0" company="Furfel" />
 
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
@@ -17,7 +17,7 @@
 	<window width="64" height="64" fps="60" background="#000000" hardware="true" vsync="false" />
 
 	<!--HTML5-specific-->
-	<window if="html5" resizable="true" width="640" height="640" />
+	<window if="html5" resizable="true" width="64" height="64" />
 
 	<!--Desktop-specific-->
 	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" />

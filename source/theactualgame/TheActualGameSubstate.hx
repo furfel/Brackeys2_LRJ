@@ -11,17 +11,19 @@ import flixel.tile.FlxTile;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxColor;
 import states.ComputerState;
+import states.RoomState2;
 
 class TheActualGameSubstate extends FlxSubState
 {
 	public var player:Player;
 
 	private var dungeonMap:DungeonMap;
-	private var walls:FlxTilemap;
 
+	public var walls:FlxTilemap;
 	public var floors:FlxTilemap;
 	public var slime = new FlxTypedGroup<Slime>();
 	public var stones = new FlxTypedGroup<Stone>(10);
+	public var spawner = new FlxTypedGroup<Spawner>();
 
 	public var uiGroup = new FlxTypedGroup<FlxSprite>();
 	public var follower:Follower;
@@ -49,17 +51,14 @@ class TheActualGameSubstate extends FlxSubState
 		stones = new FlxTypedGroup<Stone>(10);
 		uiGroup = new FlxTypedGroup<FlxSprite>();
 
-		slime.add(new Slime(8 * 8, 9 * 8, this).setHealthbar(new Healthbar().addTo(uiGroup)));
-		slime.add(new Slime(18 * 8, 7 * 8, this).setHealthbar(new Healthbar().addTo(uiGroup)));
-		slime.add(new Slime(10 * 8, 25 * 8, this).setHealthbar(new Healthbar().addTo(uiGroup)));
-		slime.add(new Slime(15 * 8, 22 * 8, this).setHealthbar(new Healthbar().addTo(uiGroup)));
-		slime.add(new Slime(17 * 8, 20 * 8, this).setHealthbar(new Healthbar().addTo(uiGroup)));
-		slime.add(new Slime(23 * 8, 24 * 8, this).setHealthbar(new Healthbar().addTo(uiGroup)));
-		slime.add(new Slime(22 * 8, 13 * 8, this).setHealthbar(new Healthbar().addTo(uiGroup)));
+		spawner.add(new Spawner(8 * 8, 9 * 8, 3 * 8, this, 4));
+		spawner.add(new Spawner(23 * 8, 24 * 8, 5 * 8, this));
+		spawner.add(new Spawner(22 * 8, 13 * 8, 5 * 8, this, 5));
 
 		dungeonMap = new DungeonMap();
 		add(floors = dungeonMap.getFloorsMap());
 		add(slime);
+		add(spawner);
 		add(stones);
 		add(player = new Player(6 * 8, 15 * 8, this).setHealthbar(new Healthbar().addTo(uiGroup)));
 		add(walls = dungeonMap.getWallsMap());
@@ -76,18 +75,12 @@ class TheActualGameSubstate extends FlxSubState
 
 	public function gameOver()
 	{
-		openSubState(new RewindState(this));
+		close();
+		FlxG.switchState(new RoomState2());
 	}
 
 	override function update(elapsed:Float)
 	{
-		if (slime.countLiving() <= 0)
-		{
-			super.update(elapsed);
-			gameOver();
-			return;
-		}
-
 		FlxG.collide(follower, walls);
 		super.update(elapsed);
 		FlxG.collide(player, walls);
