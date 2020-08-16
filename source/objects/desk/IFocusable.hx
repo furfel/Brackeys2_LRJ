@@ -9,4 +9,5 @@ interface IFocusable
 	public function unfocus():Any;
 	public function getPoint():FlxPoint;
 	public function doAction(parentState:FlxState):Void;
+	public function fexists():Bool;
 }

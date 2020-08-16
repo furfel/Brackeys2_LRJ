@@ -52,4 +52,9 @@ class Computer extends FlxTypedSpriteGroup<FocusableSprite> implements IFocusabl
 			}
 		}
 	}
+
+	public function fexists():Bool
+	{
+		return exists && alive;
+	}
 }

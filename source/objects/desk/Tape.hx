@@ -33,6 +33,7 @@ class Tape extends FocusableSprite
 			if (state.cassetteDone)
 			{
 				state.tapeDone = true;
+				state.cassette.exists = false;
 				animation.play("tape");
 			}
 		}

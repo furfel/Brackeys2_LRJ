@@ -43,7 +43,7 @@ class Player extends FlxSprite
 		setSize(6, 7);
 		offset.set(1, 1);
 
-		health = 100.0;
+		health = 25.0;
 	}
 
 	private function stopSounds()
@@ -90,6 +90,8 @@ class Player extends FlxSprite
 
 	private function updateMovement()
 	{
+		if (frozen)
+			return;
 		#if js
 		if (Main.html5gamepad.getAxis(0) > 0.5 || FlxG.keys.pressed.D)
 		{
@@ -181,7 +183,7 @@ class Player extends FlxSprite
 		healthbar.x = this.x;
 		healthbar.y = this.y;
 		healthbar.followObject(this);
-		healthbar.updateHealth(health, 100.0);
+		healthbar.updateHealth(health, 25.0);
 		return this;
 	}
 
@@ -194,18 +196,45 @@ class Player extends FlxSprite
 
 		health -= FlxG.random.float(1.0, 5.0);
 		if (healthbar != null)
-			healthbar.updateHealth(health, 100.0);
+			healthbar.updateHealth(health, 25.0);
 
 		if (health < 0)
 		{
-			if (parent != null)
-				parent.gameOver();
+			kill();
 			return;
 		}
 		paralyzed = 0.4;
 		var _angle = FlxAngle.angleBetween(this, slime, true);
 		velocity.set(-speed, 0);
 		velocity.rotate(FlxPoint.weak(0, 0), _angle);
+	}
+
+	public var frozen = false;
+
+	public function freeze(facing:Int = FlxObject.DOWN)
+	{
+		frozen = true;
+		up = false;
+		left = false;
+		right = false;
+		down = false;
+		velocity.set(0, 0);
+		animation.play(Std.string(facing));
+	}
+
+	override function kill()
+	{
+		super.kill();
+		exists = true;
+		color = FlxColor.GRAY >> 1;
+		if (parent != null)
+			parent.gameOver();
+	}
+
+	override function destroy()
+	{
+		super.destroy();
+		stopSounds();
 	}
 
 	private var action = false;
@@ -225,59 +254,64 @@ class Player extends FlxSprite
 				velocity.set(0, 0);
 				color = FlxColor.WHITE;
 			}
+		}
+
+		if (frozen)
 			return;
-		}
 
-		updateMovement();
-		var angle = 0.0;
-		if (up || down || left || right)
+		var __angle = 0.0;
+		if (paralyzed <= 0)
 		{
-			var speed = getFloorSpeed();
-			velocity.set(speed, 0);
-			updateSoundFromSpeed(speed);
+			updateMovement();
+			if (up || down || left || right)
+			{
+				var speed = getFloorSpeed();
+				velocity.set(speed, 0);
+				updateSoundFromSpeed(speed);
 
-			if ((up && down) || (!up && !down))
-			{
-				if (left && right)
-					velocity.set(0, 0);
-				else if (left)
+				if ((up && down) || (!up && !down))
 				{
-					facing = FlxObject.LEFT;
-					angle = 180;
+					if (left && right)
+						velocity.set(0, 0);
+					else if (left)
+					{
+						facing = FlxObject.LEFT;
+						__angle = 180;
+					}
+					else if (right)
+					{
+						facing = FlxObject.RIGHT;
+						__angle = 0;
+					}
 				}
-				else if (right)
+				else if (up)
 				{
-					facing = FlxObject.RIGHT;
-					angle = 0;
+					facing = FlxObject.UP;
+					if ((left && right) || (!left && !right))
+						__angle = 270;
+					else if (left)
+						__angle = 225;
+					else if (right)
+						__angle = 315;
 				}
-			}
-			else if (up)
-			{
-				facing = FlxObject.UP;
-				if ((left && right) || (!left && !right))
-					angle = 270;
-				else if (left)
-					angle = 225;
-				else if (right)
-					angle = 315;
-			}
-			else if (down)
-			{
-				facing = FlxObject.DOWN;
-				if ((left && right) || (!left && !right))
-					angle = 90;
-				else if (left)
-					angle = 135;
-				else if (right)
-					angle = 45;
-			}
+				else if (down)
+				{
+					facing = FlxObject.DOWN;
+					if ((left && right) || (!left && !right))
+						__angle = 90;
+					else if (left)
+						__angle = 135;
+					else if (right)
+						__angle = 45;
+				}
 
-			velocity.rotate(FlxPoint.weak(0, 0), angle);
-		}
-		else
-		{
-			velocity.set(0, 0);
-			stopSounds();
+				velocity.rotate(FlxPoint.weak(0, 0), __angle);
+			}
+			else
+			{
+				velocity.set(0, 0);
+				stopSounds();
+			}
 		}
 
 		var anyAction = FlxG.keys.justPressed.SPACE;
@@ -287,18 +321,18 @@ class Player extends FlxSprite
 		if (!action && anyAction)
 		{
 			action = true;
-			if (angle == 0)
-				angle = FlxAngle.angleFromFacing(facing, true);
+			if (__angle == 0)
+				__angle = FlxAngle.angleFromFacing(facing, true);
 			var stone = parent.stones.getFirstAvailable();
 			if (stone == null && parent.stones.countLiving() < parent.stones.maxSize)
-				parent.stones.add(new Stone(getMidpoint().x - 2, getMidpoint().y - 2, angle));
+				parent.stones.add(new Stone(getMidpoint().x - 2, getMidpoint().y - 2, __angle));
 			else if (stone != null)
-				stone.throwStone(getMidpoint().x - 2, getMidpoint().y - 2, angle);
+				stone.throwStone(getMidpoint().x - 2, getMidpoint().y - 2, __angle);
 		}
-
 		if (!anyAction)
 			action = false;
 
-		updateAnim();
+		if (paralyzed <= 0)
+			updateAnim();
 	}
 }

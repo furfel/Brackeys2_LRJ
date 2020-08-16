@@ -36,7 +36,7 @@ class Healthbar extends FlxSprite
 
 	public function updateHealth(_health:Float, maxHealth:Float)
 	{
-		scale.set(_health / maxHealth, 1);
+		scale.set(Math.max(_health / maxHealth, 0), 1);
 		color = FlxColor.fromRGBFloat(1.0 - (_health / maxHealth), _health / maxHealth, 0.0);
 	}
 

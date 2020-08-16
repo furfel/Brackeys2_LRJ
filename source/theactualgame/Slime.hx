@@ -101,13 +101,18 @@ class Slime extends FlxSprite
 		if (health < 0)
 		{
 			kill();
-			if (healthbar != null)
-				healthbar.kill();
-			spawner.killSlime();
 			return;
 		}
 		paralyzedVelocity = new FlxPoint(velocity.x, velocity.y);
 		paralyzed = 0.8;
+	}
+
+	override function kill()
+	{
+		super.kill();
+		if (healthbar != null)
+			healthbar.kill();
+		spawner.killSlime();
 	}
 
 	override function update(elapsed:Float)

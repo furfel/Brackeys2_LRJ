@@ -41,7 +41,7 @@ class Follower extends FlxSprite
 		this.walls = walls;
 		this.parent = parent;
 
-		health = 100.0;
+		health = 25.0;
 	}
 
 	var currentPoint:FlxPoint = null;
@@ -54,7 +54,7 @@ class Follower extends FlxSprite
 		healthbar.x = this.x;
 		healthbar.y = this.y;
 		healthbar.followObject(this);
-		healthbar.updateHealth(health, 100.0);
+		healthbar.updateHealth(health, 25.0);
 		return this;
 	}
 
@@ -70,7 +70,7 @@ class Follower extends FlxSprite
 		var hit = FlxG.random.float(1.0, 5.0);
 		health -= hit;
 		if (healthbar != null)
-			healthbar.updateHealth(health, 100.0);
+			healthbar.updateHealth(health, 25.0);
 
 		if (health < 20 && !damnPlayed)
 		{
@@ -82,14 +82,22 @@ class Follower extends FlxSprite
 
 		if (health < 0)
 		{
-			if (parent != null)
-				parent.gameOver();
+			kill();
 			return;
 		}
 		paralyzed = 0.4;
 		var _angle = FlxAngle.angleBetween(this, slime, true);
 		velocity.set(-25.0, 0);
 		velocity.rotate(FlxPoint.weak(0, 0), _angle);
+	}
+
+	override function kill()
+	{
+		super.kill();
+		exists = true;
+		color = FlxColor.GRAY >> 1;
+		if (parent != null)
+			parent.gameOver();
 	}
 
 	var currentAnimation = "";

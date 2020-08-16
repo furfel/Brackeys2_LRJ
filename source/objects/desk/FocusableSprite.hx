@@ -38,4 +38,9 @@ class FocusableSprite extends FlxSprite implements IFocusable
 	}
 
 	public function doAction(parentState:FlxState):Void {}
+
+	public function fexists():Bool
+	{
+		return alive && exists;
+	}
 }

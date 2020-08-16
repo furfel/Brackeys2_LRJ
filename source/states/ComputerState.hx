@@ -6,6 +6,7 @@ import flixel.FlxState;
 import flixel.system.FlxSound;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+import theactualgame.TheActualGameSubstate2;
 import theactualgame.TheActualGameSubstate;
 
 class ComputerState extends FlxState
@@ -71,6 +72,7 @@ class ComputerState extends FlxState
 				FlxG.camera.fade(FadeColor, 0.15, () ->
 				{
 					remove(screen);
+					// openSubState(new TheActualGameSubstate2());
 					openSubState(new TheActualGameSubstate(this));
 				});
 			});

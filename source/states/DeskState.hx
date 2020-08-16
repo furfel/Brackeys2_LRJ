@@ -56,9 +56,14 @@ class DeskState extends FlxState
 			current++;
 		current = current < 0 ? current = focusables.length - 1 : current % focusables.length;
 
-		focusables[current].focus();
+		if (!focusables[current].fexists())
+			move(back);
+		else
+		{
+			focusables[current].focus();
 
-		pointer.setPosition(focusables[current].getPoint().x, focusables[current].getPoint().y);
+			pointer.setPosition(focusables[current].getPoint().x, focusables[current].getPoint().y);
+		}
 	}
 
 	public var cassetteDone = false;
